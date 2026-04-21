@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор надёжных паролей</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>🔐 Генератор паролей</h1>
+    <div class="sub">Криптостойкие пароли на бэкенде</div>
+
+    <div class="password-area">
+        <input type="text" id="password" readonly placeholder="Нажмите «Сгенерировать»">
+        <button type="button" class="copy-btn" id="copyBtn">📋 Копировать</button>
+    </div>
+
+    <div class="setting">
+        <span>Длина:</span>
+        <input type="range" id="lengthSlider" min="4" max="40" value="12">
+        <span class="length-value" id="lengthValue">12</span>
+    </div>
+
+    <div class="checkbox-group">
+        <label><input type="checkbox" id="useUpper" checked> A-Z</label>
+        <label><input type="checkbox" id="useLower" checked> a-z</label>
+        <label><input type="checkbox" id="useDigits" checked> 0-9</label>
+        <label><input type="checkbox" id="useSpecial"> !@#$%</label>
+        <label><input type="checkbox" id="excludeAmbiguous"> Исключить 0OlI</label>
+    </div>
+
+    <div class="strength">
+        <div class="strength-bar" id="strengthBar"></div>
+    </div>
+    <div class="strength-text" id="strengthText">—</div>
+
+    <button type="button" class="generate" id="generateBtn">✨ Сгенерировать</button>
+
+    <div class="history-title">📜 История (последние 10)</div>
+    <ul id="historyList">
+        <li style="color:#666;">Загрузка...</li>
+    </ul>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
