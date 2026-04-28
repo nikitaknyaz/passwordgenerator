@@ -24,13 +24,27 @@ function generatePassword(length, options) {
         return null;
     }
 
-    let password = '';
-    const bytes = crypto.randomBytes(length);
-    for (let i = 0; i < length; i++) {
-        password += allowedChars[bytes[i] % allowedChars.length];
-    }
+    // Генерируем пока не получим подходящий пароль
+    while (true) {
+        let password = '';
+        const bytes = crypto.randomBytes(length);
+        for (let i = 0; i < length; i++) {
+            password += allowedChars[bytes[i] % allowedChars.length];
+        }
 
-    return password;
+        // Проверяем ТОЛЬКО те типы символов, которые выбрал пользователь
+        let isValid = true;
+        
+        if (useUpper && !/[A-Z]/.test(password)) isValid = false;
+        if (useLower && !/[a-z]/.test(password)) isValid = false;
+        if (useDigits && !/[0-9]/.test(password)) isValid = false;
+        if (useSpecial && !/[^A-Za-z0-9]/.test(password)) isValid = false;
+
+        if (isValid) {
+            return password;
+        }
+        // Если не подошёл — генерируем заново
+    }
 }
 
 function checkStrength(password) {
