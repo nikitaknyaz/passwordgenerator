@@ -1,98 +1,64 @@
-// подключение sqlite3 для работы с базой данных
-const sqlite3 = require('sqlite3').verbose();
-// подключение path для правильного формирования пути к файлу бд
-const path = require('path');
+const { Pool } = require('pg');
 
-// путь к файлу базы данных (находится в папке backend)
-const dbPath = path.join(__dirname, '../passwords.db');
-// создание подключения к базе данных
-const db = new sqlite3.Database(dbPath);
+const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'password_generator',
+    password: 'qwebnm888',
+    port: 5432,
+});
 
-// создание таблицы passwords с полями согласно требованию к бд
-// список полей: encrypted_password, password1_is_1_hash, length,
-// has_uppercase, has_lowercase, has_digits, has_symbols,
-// generated_at, strength_score
-db.run(`
-    create table if not exists passwords (
-        id integer primary key autoincrement,
-        password text not null,
-        length integer not null,
-        has_uppercase integer not null,
-        has_lowercase integer not null,
-        has_digits integer not null,
-        has_symbols integer not null,
-        generated_at text not null,
-        strength_score integer not null
-    )
-`);
-
-// функция добавления нового пароля в базу данных
-// принимает: сам пароль, длину, наличие каждого типа символов, оценку силы
-function addPassword(plainPassword, length, hasUppercase, hasLowercase, hasDigits, hasSymbols, strengthScore) {
-    // возвращаем promise для удобства использования async/await
-    return new Promise((resolve, reject) => {
-        db.run(
-            `insert into passwords (
-                password,
-                length,
-                has_uppercase,
-                has_lowercase,
-                has_digits,
-                has_symbols,
-                generated_at,
-                strength_score
-            ) values (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-                plainPassword,
-                length,
-                hasUppercase ? 1 : 0,
-                hasLowercase ? 1 : 0,
-                hasDigits ? 1 : 0,
-                hasSymbols ? 1 : 0,
-                new Date().toISOString(),
-                strengthScore
-            ],
-            function(err) {
-                if (err) reject(err);
-                else resolve(this.lastID);
-            }
-        );
-    });
+async function initDatabase() {
+    const createTableQuery = `
+        create table if not exists passwords (
+            id serial primary key,
+            password text not null,
+            length integer not null,
+            has_uppercase integer not null,
+            has_lowercase integer not null,
+            has_digits integer not null,
+            has_symbols integer not null,
+            generated_at timestamp not null,
+            strength_score integer not null
+        )
+    `;
+    await pool.query(createTableQuery);
+    console.log('таблица passwords создана или уже существует');
 }
 
-// функция получения последних 10 паролей из истории
-// требование кейса: хранение истории генераций
-function getLastPasswords() {
-    return new Promise((resolve, reject) => {
-        db.all(
-            `select 
-                password,
-                length,
-                has_uppercase,
-                has_lowercase,
-                has_digits,
-                has_symbols,
-                generated_at,
-                strength_score
-            from passwords 
-            order by id desc limit 10`,
-            (err, rows) => {
-                if (err) reject(err);
-                else resolve(rows);
-            }
-        );
-    });
+async function addPassword(password, length, hasUppercase, hasLowercase, hasDigits, hasSymbols, strengthScore) {
+    // преобразуем булевы значения в числа 0/1
+    const up = hasUppercase ? 1 : 0;
+    const low = hasLowercase ? 1 : 0;
+    const dig = hasDigits ? 1 : 0;
+    const sym = hasSymbols ? 1 : 0;
+
+    const query = `
+        insert into passwords (
+            password, length, has_uppercase, has_lowercase,
+            has_digits, has_symbols, generated_at, strength_score
+        ) values ($1, $2, $3, $4, $5, $6, $7, $8)
+        returning id
+    `;
+    const values = [password, length, up, low, dig, sym, new Date(), strengthScore];
+    const result = await pool.query(query, values);
+    return result.rows[0].id;
 }
 
-// функция очистки всей истории
-function clearHistory() {
-    return new Promise((resolve, reject) => {
-        db.run('delete from passwords', (err) => {
-            if (err) reject(err);
-            else resolve();
-        });
-    });
+async function getLastPasswords() {
+    const query = `
+        select password, length, has_uppercase, has_lowercase,
+               has_digits, has_symbols, generated_at, strength_score
+        from passwords order by id desc limit 10
+    `;
+    const result = await pool.query(query);
+    return result.rows;
 }
 
-// экспорт функций для использования в других файлах
+async function clearHistory() {
+    await pool.query('delete from passwords');
+}
+
+initDatabase().catch(err => console.error('ошибка инициализации бд:', err));
+
 module.exports = { addPassword, getLastPasswords, clearHistory };

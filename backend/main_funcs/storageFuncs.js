@@ -27,26 +27,30 @@ function calculateStrengthScore(length, hasUppercase, hasLowercase, hasDigits, h
 async function addToHistory(password, length, options) {
     const { useUpper, useLower, useDigits, useSpecial } = options;
 
+    // преобразуем true/false в 1/0 явно
+    const hasUppercase = useUpper ? 1 : 0;
+    const hasLowercase = useLower ? 1 : 0;
+    const hasDigits = useDigits ? 1 : 0;
+    const hasSymbols = useSpecial ? 1 : 0;
+
     const strengthScore = calculateStrengthScore(
         length,
-        useUpper,
-        useLower,
-        useDigits,
-        useSpecial
+        hasUppercase === 1,
+        hasLowercase === 1,
+        hasDigits === 1,
+        hasSymbols === 1
     );
 
-    // сохранение в базу данных со всеми характеристиками пароля
     await addPassword(
         password,
         length,
-        useUpper,
-        useLower,
-        useDigits,
-        useSpecial,
+        hasUppercase,    // теперь 0 или 1
+        hasLowercase,    // теперь 0 или 1
+        hasDigits,       // теперь 0 или 1
+        hasSymbols,      // теперь 0 или 1
         strengthScore
     );
 
-    // возвращаем обновлённую историю
     return await getLastPasswords();
 }
 

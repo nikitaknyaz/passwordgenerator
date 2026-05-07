@@ -24,6 +24,8 @@ app.use('/api', generateRoute);
 app.use('/api', historyRoute);
 app.use('/api', strengthRoute);
 
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../frontend')));
 // запуск сервера
 app.listen(port, () => {
     console.log(`сервер запущен на http://localhost:${port}`);
