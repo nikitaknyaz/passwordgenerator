@@ -1,13 +1,17 @@
-const { getHistory, clearHistory } = require('../main_funcs/storageFuncs');//подключаем функцию
+// контроллер для работы с историей паролей
 
-function get(req, res) { //получение истории
-    const history = getHistory();
+const { getHistory, clearHistory } = require('../main_funcs/storageFuncs');
+
+// функция получения истории
+async function get(req, res) {
+    const history = await getHistory();
     res.json(history);
 }
 
-function clear(req, res) { // очистка истории
-    clearHistory();
-    res.json({ message: 'История очищена' });
+// функция очистки истории
+async function clear(req, res) {
+    const result = await clearHistory();
+    res.json(result);
 }
 
-module.exports = { get, clear }; // для роутера
+module.exports = { get, clear };

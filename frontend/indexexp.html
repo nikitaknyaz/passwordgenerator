@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Wendy+One&display=swap"
+    rel="stylesheet"
+/>
+
+<link rel="stylesheet" href="styleexp.css" />
+
+<title>Password Generator</title>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="app">
+
+    <h1 class="title">PASSWORD GENERATOR</h1>
+
+    <section class="card">
+
+        <div class="output">
+
+            <input
+                id="password"
+                type="text"
+                readonly
+                placeholder="generate a password..."
+            />
+
+            <button class="copy-main" onclick="copyPassword()">
+                copy
+            </button>
+
+        </div>
+
+        <div class="settings">
+
+            <div class="left-side">
+
+                <div class="length-row">
+
+                    <span class="length-label">length</span>
+
+                    <span id="lengthValue" class="length-value">
+                        17
+                    </span>
+
+                </div>
+
+                <input
+                    id="length"
+                    type="range"
+                    min="4"
+                    max="64"
+                    value="17"
+                />
+
+                <button class="generate" onclick="generatePassword()">
+                    generate
+                </button>
+
+            </div>
+
+            <div class="right-side">
+
+                <label class="option">
+                    <input type="checkbox" id="uppercase" />
+                    <span class="custom-checkbox"></span>
+                    uppercase
+                </label>
+
+                <label class="option">
+                    <input type="checkbox" id="lowercase" checked />
+                    <span class="custom-checkbox"></span>
+                    lowercase
+                </label>
+
+                <label class="option">
+                    <input type="checkbox" id="numbers" />
+                    <span class="custom-checkbox"></span>
+                    numbers
+                </label>
+
+                <label class="option">
+                    <input type="checkbox" id="symbols" />
+                    <span class="custom-checkbox"></span>
+                    symbols
+                </label>
+
+            </div>
+
+        </div>
+
+        <div class="history" id="history"></div>
+
+        <button class="clear" onclick="clearHistory()">
+            clear history
+        </button>
+
+    </section>
+
+</div>
+
+<script src="scriptexp.js"></script>
+
+</body>
+</html>

@@ -1,10 +1,13 @@
-const { generatePassword } = require('../main_funcs/generatePass.js'); // функция из сервиса
-const { addToHistory } = require('../main_funcs/storageFuncs'); 
+const { generatePassword } = require('../main_funcs/generatePass');
+const { addToHistory } = require('../main_funcs/storageFuncs');
 
-function generate(req, res) { // обработка запроса
+// функция-контроллер для обработки запроса на генерацию пароля
+async function generate(req, res) {
+    // извлечение параметров из тела запроса
     const { length, useUpper, useLower, useDigits, useSpecial, excludeAmbiguous } = req.body;
 
-    const password = generatePassword(length, { // Достаём параметры из тела запроса
+    // вызов функции генерации пароля
+    const password = generatePassword(length, {
         useUpper,
         useLower,
         useDigits,
@@ -12,12 +15,21 @@ function generate(req, res) { // обработка запроса
         excludeAmbiguous
     });
 
-    if (!password) { // ошибка: без чекбоксов
-        return res.status(400).json({ error: 'Выберите хотя бы один тип символов' });
+    // проверка ошибки: не выбран ни один тип символов
+    if (!password) {
+        return res.status(400).json({ error: 'выберите хотя бы один тип символов' });
     }
 
-    const history = addToHistory(password, length); // сохранение 
-    res.json({ password, history }); // отправляем пароль json`ом
+    // сохранение пароля в историю и получение обновлённого списка
+    const history = await addToHistory(password, length, {
+        useUpper,
+        useLower,
+        useDigits,
+        useSpecial
+    });
+
+    // отправка ответа фронтенду
+    res.json({ password, history });
 }
 
-module.exports = { generate }; // для использования в роутере
+module.exports = { generate };
