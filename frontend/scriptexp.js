@@ -59,6 +59,8 @@ const lowercaseCheck = document.getElementById("lowercase");
 const numbersCheck = document.getElementById("numbers");
 const symbolsCheck = document.getElementById("symbols");
 const historyDiv = document.getElementById("history");
+const strengthFill = document.getElementById("strengthFill");
+const strengthText = document.getElementById("strengthText");
 
 // отображение текущей длины
 if (lengthInput && lengthValue) {
@@ -120,21 +122,53 @@ function renderHistory(history) {
 }
 
 // проверка силы пароля через бэкенд
+function updateStrengthIndicator(data) {
+
+    if (!data) return;
+
+    const percent = Math.min(
+        Math.round((data.score / 7) * 100),
+        100
+    );
+
+    strengthFill.style.width = percent + "%";
+
+    strengthText.textContent =
+        data.strength.toUpperCase();
+}
 async function checkStrength(password) {
     try {
-        const response = await fetch(`${api}/api/check-strength`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password: password })
-        });
+
+        const response = await fetch(
+            `${api}/api/check-strength`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    password: password
+                })
+            }
+        );
+
         const data = await response.json();
-        console.log(`сила пароля: ${data.strength}`); // можно вывести в интерфейс
+
+        updateStrengthIndicator(data);
+
         return data;
+
     } catch (err) {
-        console.warn('ошибка проверки силы:', err);
+
+        console.warn(
+            'ошибка проверки силы:',
+            err
+        );
+
         return null;
     }
 }
+
 
 // генерация пароля через бэкенд
 async function generatePassword() {
@@ -227,7 +261,11 @@ function escapeHtml(str) {
         return m;
     });
 }
-
+//сброс оценки сложности при загрузке
+updateStrengthIndicator({
+    score: 0,
+    strength: "weak"
+});
 // загрузка истории при старте
 loadHistory();
 
