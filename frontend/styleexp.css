@@ -379,3 +379,53 @@ input[type="range"]::-webkit-slider-thumb {
         width: 100%;
     }
 }
+/* ===== индикатор сложности ===== */
+
+.strength-block {
+    margin-bottom: 24px;
+}
+
+.strength-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 8px;
+
+    color: #d7d7d7;
+    font-size: 14px;
+}
+
+#strengthText {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.strength-bar {
+    width: 100%;
+    height: 10px;
+
+    background: rgba(217,217,217,0.25);
+
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.strength-fill {
+    width: 0%;
+    height: 100%;
+
+    border-radius: 999px;
+
+    background: linear-gradient(
+        90deg,
+        #ffffff 0%,
+        #d7dcff 25%,
+        #aab5ff 50%,
+        #727dff 75%,
+        #252f9e 100%
+    );
+
+    transition: width 0.35s ease;
+}
