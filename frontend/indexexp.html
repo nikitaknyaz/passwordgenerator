@@ -53,17 +53,31 @@
 
                 </div>
 
-                <input
-                    id="length"
-                    type="range"
-                    min="4"
-                    max="64"
-                    value="17"
-                />
+               <input
+    id="length"
+    type="range"
+    min="4"
+    max="64"
+    value="17"
+/>
 
-                <button class="generate" onclick="generatePassword()">
-                    generate
-                </button>
+<div class="strength-block">
+
+    <div class="strength-labels">
+        <span>weak</span>
+        <span id="strengthText">weak</span>
+        <span>strong</span>
+    </div>
+
+    <div class="strength-bar">
+        <div id="strengthFill" class="strength-fill"></div>
+    </div>
+
+</div>
+
+<button class="generate" onclick="generatePassword()">
+    generate
+</button>
 
             </div>
 
