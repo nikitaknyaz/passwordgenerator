@@ -7,7 +7,8 @@
 body {
     font-family: 'Space Grotesk', sans-serif;
     background: #2f1083;
-    overflow: hidden;
+    overflow-x: hidden;  
+    overflow-y: auto;
     min-height: 100vh;
 
     display: flex;
